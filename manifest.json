@@ -1,0 +1,15 @@
+{
+    "manifest_version": 2,
+
+    "name": "Notes App -- Chrome Extension",
+    "description": "This extension displays notes you have taken with the Notes App",
+    "version": "0.0.1",
+
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "activeTab", "https://ajax.googleapis.com/"
+    ]
+}

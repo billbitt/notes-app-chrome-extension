@@ -3,11 +3,12 @@
 
     "name": "Notes App -- Chrome Extension",
     "description": "This extension displays notes you have taken with the Notes App",
-    "version": "0.0.1",
+    "version": "0.0.0",
 
     "browser_action": {
         "default_icon": "icon.png",
-        "default_popup": "popup.html"
+        "default_popup": "popup.html",
+        "default_title": "Notes"
     },
     "permissions": [
         "activeTab", "https://ajax.googleapis.com/"

@@ -10,7 +10,21 @@
         "default_popup": "popup.html",
         "default_title": "Notes"
     },
+
+    "background": {
+        "scripts": ["jquery-3.1.1.min.js", "popup.js"]
+    },
+
+    "content_scripts": [ 
+        {
+            "js": [ "jquery-3.1.1.min.js", "popup.js" ],
+            "matches": [ "http://*/*", "https://*/*"]
+        }
+    ],
+
     "permissions": [
         "activeTab", "https://ajax.googleapis.com/"
     ]
+    
+    
 }

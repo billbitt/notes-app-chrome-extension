@@ -10,66 +10,51 @@ function getCurrentTabUrl(callback) {
     //store the relevant info from the query results 
     var tab = tabsArray[0];  //an array of tabs will be returned, but it will be an array of one because we only ask for the active tab 
     var url = tab.url; 
-    //not sure what this is doing, exactly but was used in the documentation 
+    //write an error message to the console if url is not a string
     console.assert(typeof url == 'string', 'tab.url should be a string'); 
     //execute callback to do something with the url when this query returns it
     callback(url);  
   }); //end chrome.tabs.query
 }
 
-//function to get the Notes for the current tab 
+//function to get all notes from the mongo database
 function getNotes() {
   renderStatus("Running the getNotes function");
-  //set up query url
-  var queryURL = "http://localhost:3000/api/fetch-all-notes";
   //make a request to the Notes App and get an array back of all the notes  
-  var request = new XMLHttpRequest();
-  request.open('GET', queryURL, true);
-  // The Google image search API responds with JSON, so let Chrome parse it.
-  //request.responseType = 'json';
-  request.onload = function() {
-    // Parse and process the response from Google Image Search.
-    var response = request.response;
-    if (!response) {
-      renderStatus('No response from the api.');
-      return;
-    }
-    //print the response out (for test purposes)
-    renderStatus(response);
+  $.ajax({
+    url: "http://localhost:3000/api/fetch-all-notes", 
+    method: "GET"
+  }).done(function(response){
+    //update status
+    renderStatus("Status: Response received");
+    $("#status").css("color","green");
     //display the notes 
     displayNotes(response);
-  };
-  request.onerror = function() {
-    renderStatus('Network error.');
-  };
-  request.send();
+  }).fail(function(response){
+    //update status
+    renderStatus("API call failed");
+    $("#status").css("color","red");
+    //display the error
+    $("#text").text("response: " + JSON.stringify(response));
+  })
 }
 
-//test function to hit a different api 
+//test ajax function that queries a public weather api 
 function queryTest(){
+  //make the url to call
+	var URL = "api.openweathermap.org/data/2.5/weather?q={Bujumbura}&appid=";
   //var apiKey = "88a956b73055149f4e2abdbc2e704bc2";
 	var apiKey = "c534e707825fc7c82817ddaaa699229d";
-	//make the url to call
-	var URL = "api.openweathermap.org/data/2.5/weather?q={Bujumbura}&appid=";
+  //make the query URL 
 	var queryURL = "http://" + URL + apiKey;
 	//make the call
-  var x = new XMLHttpRequest();
-  x.open('GET', queryURL);
-  // The Google image search API responds with JSON, so let Chrome parse it.
-  x.responseType = 'json';
-  x.onload = function() {
-    // Parse and process the response from Google Image Search.
-    var response = x.response;
-    if (!response) {
-      renderStatus('No response from the api.');
-      return;
-    };
-    renderStatus(response);
-  };
-  x.onerror = function() {
-    renderStatus('Network error.');
-  };
-  x.send();
+  $.ajax({
+    url: queryURL,
+    method: "GET",
+  }).done(function(response){
+    renderStatus("Response received");
+    $("#text").text("The wind speed in Bujumbura is: " + response.wind.speed).css("color","green");
+  })
 }
 
 //funciton to display the notes returned by the Notes App api 
@@ -92,7 +77,7 @@ function displayNotes(notesArray){
 
 //function to update the status text in the popup window 
 function renderStatus(statusText) {
-  document.getElementById('status').textContent = statusText;
+  $("#status").text(statusText);
 }
 
 //create event listener for the extension   
@@ -104,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //run a test query
     //queryTest();
-    
+
     //get the note from the Notes App 
     getNotes();
 

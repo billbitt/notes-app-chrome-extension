@@ -39,24 +39,6 @@ function getNotes() {
   })
 }
 
-//test ajax function that queries a public weather api 
-function queryTest(){
-  //make the url to call
-	var URL = "api.openweathermap.org/data/2.5/weather?q={Bujumbura}&appid=";
-  //var apiKey = "88a956b73055149f4e2abdbc2e704bc2";
-	var apiKey = "c534e707825fc7c82817ddaaa699229d";
-  //make the query URL 
-	var queryURL = "http://" + URL + apiKey;
-	//make the call
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-  }).done(function(response){
-    renderStatus("Response received");
-    $("#text").text("The wind speed in Bujumbura is: " + response.wind.speed).css("color","green");
-  })
-}
-
 //funciton to display the notes returned by the Notes App api 
 function displayNotes(notesArray){
   //display each note in the popup window
@@ -86,10 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
   getCurrentTabUrl(function(url) {
     //update status
     renderStatus('Retrieving your notes for: ' + url);
-
-    //run a test query
-    //queryTest();
-
     //get the note from the Notes App 
     getNotes();
 

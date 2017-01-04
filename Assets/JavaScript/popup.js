@@ -1,3 +1,10 @@
+// main variables
+var currentUrl = "";
+//variables for saving and updating notes
+var saveNoteBtn = $('#save-note');
+var updateNoteBtn = $('#update-note');
+var noteTitle = $('#note-title');
+var noteContents = $('#note-contents');
 
 //function to get all notes from the mongo database
 function getNotes() {
@@ -22,8 +29,8 @@ function getNotes() {
 
 //function to get a note from the mongo database by its ID
 function getNoteById(id) {
-  noteId = id;
-  queryUrl = 'http://localhost:3000/api/fetch-note/' + id;
+  var noteId = id;
+  var queryUrl = 'http://localhost:3000/api/fetch-note/' + id;
   //make a request to the Notes App and get an array back of all the notes  
   $.ajax({
     url: queryUrl, 
@@ -80,12 +87,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-//variables for saving and updating notes
-var saveNoteBtn = $('#save-note');
-var updateNoteBtn = $('#update-note');
-var noteTitle = $('#note-title');
-var noteContents = $('#note-contents');
-
 //function to get the url of the current tab, takes a callback for what to do with it once received
 function getCurrentTabUrl(callback) {
   console.log("getting current tab url");
@@ -101,6 +102,8 @@ function getCurrentTabUrl(callback) {
     var url = tab.url; 
     //write an error message to the console if url is not a string
     console.assert(typeof url == 'string', 'tab.url should be a string'); 
+    //update the global currentUrl variable.
+    currentUrl = url;
     //execute callback to do something with the url when this query returns it
     callback(url);  
   }); //end chrome.tabs.query
@@ -108,19 +111,16 @@ function getCurrentTabUrl(callback) {
 
 // process note inputs into an obj
 function getNoteData(){
-  console.log("creating note data");
-  //run the getCurrentTabUrl function and pass rest of this function as a callback to it.
-  getCurrentTabUrl(function(noteUrl){
-    console.log("executing callback function with", noteUrl)
-    // store note contents in obj.
-    var note = {
-      noteTitle: noteTitle.val(),
-      noteContents: noteContents.val(),
-      noteUrl: noteUrl
-    };
-    // post the note object
-    postNoteData(note);
-  })
+  console.log("creating note data"); //test.
+  // store note contents in obj.
+  var note = {
+    noteTitle: noteTitle.val(),
+    noteContents: noteContents.val(),
+    noteUrl: currentUrl
+  };
+  console.log(note); //test.
+  // return note object.
+  return note;
 }
 
 
@@ -139,6 +139,7 @@ function postNoteData(noteObj) {
 // click event handler to process and save note from Popup to DB
 saveNoteBtn.on('click', function(){
   var noteObj = getNoteData();
+  postNoteData(noteObj);
 });
 
 

@@ -20,7 +20,7 @@ function getNotes() {
     displayNotes(response);
   }).fail(function(response){
     //update status
-    renderStatus('API call failed');
+    renderStatus('API call to database failed');
     $('#status').css('color','red');
     //display the error
     $('#text').text('response: ' + JSON.stringify(response));
@@ -52,19 +52,21 @@ function getNoteById(id) {
 
 //funciton to display the notes returned by the Notes App api 
 function displayNotes(notesArray){
-  //display each note in the popup window
+  //display each note in the popup window, if it's url matches current URL (note: not efficient if lots of notes in db.  filtering should be done further upstream.)
   notesArray.forEach((note) => {
-    //get note title
-    var noteTitle = note.noteTitle;
-    //get note body
-    var noteContents = note.noteContents;
-    //add the note to the popup window's html 
-    var newNote = $('<div>');
-    var newTitle = $('<h3>' + noteTitle + '</h3>');
-    var newContents = $('<p>' + noteContents + '</p>')
-    newNote.append(newTitle);
-    newNote.append(newContents);
-    $('#notes-display').append(newNote);
+    if (note.noteUrl === currentUrl){
+      //get note title
+      var noteTitle = note.noteTitle;
+      //get note body
+      var noteContents = note.noteContents;
+      //add the note to the popup window's html 
+      var newNote = $('<div>');
+      var newTitle = $('<h3>' + noteTitle + '</h3>');
+      var newContents = $('<p>' + noteContents + '</p>')
+      newNote.append(newTitle);
+      newNote.append(newContents);
+      $('#notes-display').append(newNote);
+    };
   })
 }
 
@@ -118,7 +120,6 @@ function getNoteData(){
     noteContents: noteContents.val(),
     noteUrl: currentUrl
   };
-  console.log(note); //test.
   // return note object.
   return note;
 }
@@ -138,8 +139,15 @@ function postNoteData(noteObj) {
 
 // click event handler to process and save note from Popup to DB
 saveNoteBtn.on('click', function(){
-  var noteObj = getNoteData();
-  postNoteData(noteObj);
+  //check to make sure the URL has been aquired when window loaded.
+  if (currentUrl === ""){
+    alert("Missing page Url. Cannot add note. Try restarting the extension");
+    return;
+  // if currentUrl isn't empty, add the note 
+  } else {
+    var noteObj = getNoteData();
+    postNoteData(noteObj);
+  };
 });
 
 

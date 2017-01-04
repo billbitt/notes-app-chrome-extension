@@ -1,0 +1,16 @@
+body, input, textarea {
+    font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+    font-size: small;
+}
+
+textarea {
+    width: 100%;
+}
+
+#status {
+    font-size: small;
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: none;
+    width: 400px;  /*whould be dynamic based on screen size*/
+}

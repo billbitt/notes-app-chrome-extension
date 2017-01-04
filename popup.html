@@ -2,29 +2,25 @@
 <html>
   <head>
     <title>Getting Started Extension's Popup</title>
-    <style>
-      body {
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 100%;
-      }
-      #status {
-        white-space: pre;
-        text-overflow: ellipsis;
-        overflow: none;
-        max-width: 400px;  /*keep from getting too wide*/
-      }
-    </style>
+    <link rel="stylesheet" href="Assets/CSS/style.css">
   </head>
 
   <body>
     <div id="status"></div>
     <div id="notes-display"></div>
     <p id="text"></p>
-
+    <form method="POST">
+      <fieldset>
+        <legend for="message">Add New Note</legend>
+        <input id="note-title" name="title" placeholder="Title"></input>
+        <textarea id="note-contents" name="message" placeholder="Content"></textarea>
+        <button id="save-note" type="submit" value="Submit">Add</button>          
+      </fieldset>
+    </form>
   </body>
   
   <!--JavaScript and HTML must be in separate files per Google's Content Security Policy-->
-  <script src="jquery-3.1.1.min.js"></script>
-  <script src="popup.js"></script>
+  <script src="Assets/JavaScript/jquery-3.1.1.min.js"></script>
+  <script src="Assets/JavaScript/popup.js"></script>
 </html>
 

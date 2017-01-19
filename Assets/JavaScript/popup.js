@@ -41,11 +41,11 @@ function getNotes() {
     method: 'GET'
   // success case for request 
   }).done(function(response){
-    renderStatus('Received notes for:' + currentUrl, "green");
+    renderStatus('Received notes for: ' + currentUrl, "green");
     displayNotes(response);
   // fail case for request
   }).fail(function(response){
-    renderStatus('Failed to get notes for:' + currentUrl, "red");
+    renderStatus('Failed to get notes for: ' + currentUrl, "red");
   })
 }
 
@@ -63,31 +63,31 @@ function displayNotes(notesArray){
       var newNote = $('<form>');
       //newNote.attr('method', 'POST');
       newNote.attr('class', 'note');
-      newNote.attr('id', noteId + "-field");
-      var newField = $('<fieldset>');
-      newNote.append(newField);
+      newNote.attr('id', noteId + "-form");
       var newTitle = $('<input>'); 
+      newTitle.attr('class', 'existingTitle')
       newTitle.attr('value', noteTitle);
       newTitle.attr('name', 'title');
       newTitle.attr('id', noteId + "-title");
-      newField.append(newTitle);
+      newNote.append(newTitle);
       var newContents = $('<textarea>');
       newContents.text(noteContents);
+      newContents.attr('class', 'existingContents')
       newContents.attr('name', 'contents');
       newContents.attr('id', noteId + "-contents");
-      newField.append(newContents);
+      newNote.append(newContents);
       var newUpdateBtn = $('<button>');
       newUpdateBtn.attr('type', 'submit');
       newUpdateBtn.text('Update');
       newUpdateBtn.attr('class', 'update-note');
       newUpdateBtn.attr('data-note-id', noteId); //save the ID in the button
-      newField.append(newUpdateBtn);
+      newNote.append(newUpdateBtn);
       var newDeleteBtn = $('<button>');
       newDeleteBtn.attr('type', 'submit');
       newDeleteBtn.text('Delete');
       newDeleteBtn.attr('class', 'delete-note');
       newDeleteBtn.attr('data-note-id', noteId); //save the ID in the button
-      newField.append(newDeleteBtn);
+      newNote.append(newDeleteBtn);
       $('#notes-display').append(newNote);
     };
   })

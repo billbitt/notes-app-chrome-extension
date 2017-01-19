@@ -2,9 +2,17 @@ body, input, textarea {
     font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
 }
 
-input, textarea {
-    width: 100%;
+/*note titles and contents*/
+fieldset {
     border: 0px;
+}
+
+input, textarea {
+    padding: 5px 5px 5px 5px;
+    width: 98%;
+    border: 0px;
+    text-overflow: ellipsis;
+    /*I want these to expand down to a certain point (6 lines) then do elipses */
 }
 
 input {
@@ -16,14 +24,35 @@ textarea {
     font-size: small;
 }
 
-.note {
-    margin: 10px 0px 5px 0px;
+.note, .existingTitle, .existingContents {
+    background-color: lightsteelblue
 }
 
+.note {
+    margin: 10px 0px 5px 0px;
+    padding: 10px;
+}
+
+.existingTitle{
+    color: lightslategray;
+}
+
+.existingContents{
+    color: cadetblue;
+}
+
+/*note buttons*/
+button {
+    border: 0px;
+    margin: 0px 5px 0px 0px;
+    padding: 5px 10px 5px 10px;
+    color: grey;
+}
+
+/*status*/
 #status {
     font-size: small;
     white-space: pre;
-    text-overflow: ellipsis;
     overflow: none;
     width: 600px;  /*whould be dynamic based on screen size*/
 }

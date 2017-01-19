@@ -1,10 +1,5 @@
-// main variables
+// declare variables
 var currentUrl = "";
-//variables for saving and updating notes
-var saveNoteBtn = $('#save-note');
-var updateNoteBtn = $('#update-note');
-var noteTitle = $('#note-title');
-var noteContents = $('#note-contents');
 
 //function to get all notes from the mongo database
 function getNotes() {
@@ -27,44 +22,45 @@ function getNotes() {
   })
 }
 
-//function to get a note from the mongo database by its ID
-function getNoteById(id) {
-  var noteId = id;
-  var queryUrl = 'http://localhost:3000/api/fetch-note/' + id;
-  //make a request to the Notes App and get an array back of all the notes  
-  $.ajax({
-    url: queryUrl, 
-    method: 'GET'
-  }).done(function(response){
-    //update status
-    renderStatus('Status: Response received');
-    $('#status').css('color','green');
-    //display the notes 
-    displayNotes(response);
-  }).fail(function(response){
-    //update status
-    renderStatus('API call failed');
-    $('#status').css('color','red');
-    //display the error
-    $('#text').text('response: ' + JSON.stringify(response));
-  })
-}
-
 //funciton to display the notes returned by the Notes App api 
 function displayNotes(notesArray){
   //display each note in the popup window, if it's url matches current URL (note: not efficient if lots of notes in db.  filtering should be done further upstream.)
   notesArray.forEach((note) => {
     if (note.noteUrl === currentUrl){
-      //get note title
+      console.log("creating note for note object:", note);
+      //get note title, body and id of the note
       var noteTitle = note.noteTitle;
-      //get note body
       var noteContents = note.noteContents;
+      var noteId = note._id;
       //add the note to the popup window's html 
-      var newNote = $('<div>');
-      var newTitle = $('<h3>' + noteTitle + '</h3>');
-      var newContents = $('<p>' + noteContents + '</p>')
-      newNote.append(newTitle);
-      newNote.append(newContents);
+      var newNote = $('<form>');
+      //newNote.attr('method', 'POST');
+      newNote.attr('class', 'note');
+      newNote.attr('id', noteId + "-field");
+      var newField = $('<fieldset>');
+      newNote.append(newField);
+      var newTitle = $('<input>'); 
+      newTitle.attr('value', noteTitle);
+      newTitle.attr('name', 'title');
+      newTitle.attr('id', noteId + "-title");
+      newField.append(newTitle);
+      var newContents = $('<textarea>');
+      newContents.text(noteContents);
+      newContents.attr('name', 'contents');
+      newContents.attr('id', noteId + "-contents");
+      newField.append(newContents);
+      var newUpdateBtn = $('<button>');
+      newUpdateBtn.attr('type', 'submit');
+      newUpdateBtn.text('Update');
+      newUpdateBtn.attr('class', 'update-note');
+      newUpdateBtn.attr('data-note-id', noteId); //save the ID in the button
+      newField.append(newUpdateBtn);
+      var newDeleteBtn = $('<button>');
+      newDeleteBtn.attr('type', 'submit');
+      newDeleteBtn.text('Delete');
+      newDeleteBtn.attr('class', 'delete-note');
+      newDeleteBtn.attr('data-note-id', noteId); //save the ID in the button
+      newField.append(newDeleteBtn);
       $('#notes-display').append(newNote);
     };
   })
@@ -73,7 +69,7 @@ function displayNotes(notesArray){
 //function to update the status text in the popup window 
 function renderStatus(statusText) {
   $('#status').text(statusText);
-}
+};
 
 //create event listener for the extension   
 document.addEventListener('DOMContentLoaded', function() {
@@ -83,8 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
     renderStatus('Retrieving your notes for: ' + url);
     //get all notes from the Notes App 
     getNotes();
-    //get a specific note by ID from the Notes App 
-    //getNoteById('585c6b18d8404226f08d003f') //for test
   });
 
 });
@@ -109,25 +103,26 @@ function getCurrentTabUrl(callback) {
     //execute callback to do something with the url when this query returns it
     callback(url);  
   }); //end chrome.tabs.query
-}
+};
+
+//--- code for adding new note 
 
 // process note inputs into an obj
 function getNoteData(){
-  console.log("creating note data"); //test.
+  console.log("getting note data"); //test.
   // store note contents in obj.
   var note = {
-    noteTitle: noteTitle.val(),
-    noteContents: noteContents.val(),
-    noteUrl: currentUrl
+    noteTitle: $('#note-title').val(),
+    noteContents: $('#note-contents').val(),
+    noteUrl: currentUrl,
   };
   // return note object.
   return note;
-}
-
+};
 
 // process ajax post request
-function postNoteData(noteObj) {
-  console.log(JSON.stringify(noteObj));
+function addNote(noteObj) {
+  console.log("save note", JSON.stringify(noteObj));
   //ajax call
   $.ajax({
     method: 'POST',
@@ -135,20 +130,53 @@ function postNoteData(noteObj) {
     contentType: 'application/json',
     url: 'http://localhost:3000/api/add-notes'
   });
-}
+};
 
-// click event handler to process and save note from Popup to DB
-saveNoteBtn.on('click', function(){
+// click event handler to save a new note 
+$('#save-note').on('click', function(){
+  console.log("add note button clicked");
   //check to make sure the URL has been aquired when window loaded.
   if (currentUrl === ""){
     alert("Missing page Url. Cannot add note. Try restarting the extension");
     return;
-  // if currentUrl isn't empty, add the note 
+  // if current Url isn't empty, add the note 
   } else {
     var noteObj = getNoteData();
-    postNoteData(noteObj);
+    addNote(noteObj);
   };
 });
 
+//--- code for updating a note 
+// ajax post to update a note 
+function updateNote(noteObj) {
+  console.log("update this note:", JSON.stringify(noteObj));
+  //ajax call
+  $.ajax({
+    method: 'POST',
+    data: JSON.stringify(noteObj),
+    contentType: 'application/json',
+    url: 'http://localhost:3000/api/save-note'
+  });
+};
+// click event handler to update a new note 
+$(document).on('click', '.update-note', function(){
+  console.log("Update button pressed");
+  //get title and contents
+  var id = $(this).data('note-id');
+  var title = document.getElementById(id + "-title").value;
+  var contents =  document.getElementById(id + "-contents").value;
+  //create note object 
+  var noteObj = {
+    noteTitle: title,  //title is the name of the input field in the form. 
+    noteContents: contents,  //message is the name of the text area in the form. 
+    noteUrl: currentUrl,  //current URL is a global variable set when the extension is opened.
+    _id: id
+  };
+  //update the note
+  updateNote(noteObj);
+});
 
+//--- code for deleting a note  
+//$(document).on('click', '.delete-note', function(){
+//})
 

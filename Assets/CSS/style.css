@@ -1,10 +1,23 @@
 body, input, textarea {
     font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-    font-size: small;
+}
+
+input, textarea {
+    width: 100%;
+    border: 0px;
+}
+
+input {
+    font-size: medium;
+    font-weight: bold;
 }
 
 textarea {
-    width: 100%;
+    font-size: small;
+}
+
+.note {
+    margin: 10px 0px 5px 0px;
 }
 
 #status {
@@ -12,5 +25,5 @@ textarea {
     white-space: pre;
     text-overflow: ellipsis;
     overflow: none;
-    width: 400px;  /*whould be dynamic based on screen size*/
+    width: 600px;  /*whould be dynamic based on screen size*/
 }

@@ -51,7 +51,7 @@ function getNotes() {
 
 // function to display an array of notes 
 function displayNotes(notesArray){
-  //display each note in the popup window, if it's url matches current URL (note: filtering should be done further upstream.)
+  //display each note in the popup window, if it's url matches current URL (note: to optimize filtering should be done further upstream.)
   notesArray.forEach((note) => {
     if (note.noteUrl === currentUrl){
       console.log("creating note for note object:", note);
@@ -110,19 +110,19 @@ function updateNote(noteObj) {
   console.log("update this note:", JSON.stringify(noteObj));
   //ajax call
   $.ajax({
-    method: 'POST',
+    method: 'POST',  // should to update backend to consume as "PUT"
     data: JSON.stringify(noteObj),
     contentType: 'application/json',
     url: 'http://localhost:3000/api/save-note'
   });
 };
 
-// function to delte a note via api  
+// function to delete a note via api  
 function deleteNote(noteObj) {
   console.log("delte this note:", JSON.stringify(noteObj));
   //ajax call
   $.ajax({
-    method: 'POST',
+    method: 'POST', // should update backend to consume as "DELETE"
     data: JSON.stringify(noteObj),
     contentType: 'application/json',
     url: 'http://localhost:3000/api/delete-note'

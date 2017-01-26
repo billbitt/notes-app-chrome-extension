@@ -12,7 +12,6 @@ input, textarea {
     width: 98%;
     border: 0px;
     text-overflow: ellipsis;
-    /*I want these to expand down to a certain point (6 lines) then do elipses */
 }
 
 input {
@@ -54,5 +53,5 @@ button {
     font-size: small;
     white-space: pre;
     overflow: none;
-    width: 600px;  /*whould be dynamic based on screen size*/
+    width: 600px;  /*note: make dynamic based on screen size*/
 }
